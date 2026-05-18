@@ -2,6 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUsers, saveUser } from "../localStorage";
+// import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import {
   Box,
@@ -11,6 +14,8 @@ import {
   Typography,
   Alert,
   Stack,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
@@ -20,6 +25,7 @@ import * as Yup from "yup";
 const Signup = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,6 +42,15 @@ const Signup = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+  const handleBlur = async (e) => {
+    const { name } = e.target;
+    try {
+      await ValidateSignup.validateAt(name, formData);
+      setError((prev) => ({ ...prev, [name]: "" }));
+    } catch (err) {
+      setError((prev) => ({ ...prev, [name]: err.message }));
+    }
   };
 
   const ValidateSignup = Yup.object({
@@ -73,7 +88,7 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      await ValidateSignup.validate(formData, { abortEarly: false });
+      await ValidateSignup.validate(formData, { abortEarly: true });
     } catch (error) {
       const newError = {};
       error.inner.forEach((err) => {
@@ -122,7 +137,6 @@ const Signup = () => {
           overflow: "hidden",
         }}
       >
-       
         <Box
           sx={{
             flex: 1,
@@ -155,7 +169,6 @@ const Signup = () => {
           </Typography>
         </Box>
 
-        
         <Box
           sx={{
             flex: 1,
@@ -184,6 +197,7 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
+            onBlur={handleBlur}
             error={Boolean(error.name)}
             helperText={error.name}
           />
@@ -195,6 +209,7 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
+            onBlur={handleBlur}
             error={Boolean(error.email)}
             helperText={error.email}
           />
@@ -206,20 +221,39 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
+            onBlur={handleBlur}
             error={Boolean(error.mobile)}
             helperText={error.mobile}
           />
-
           <TextField
             value={formData.password}
             label="Password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             onChange={handleChange}
+            onBlur={handleBlur}
             error={Boolean(error.password)}
             helperText={error.password}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <VisibilityOff fontSize="small" />
+                      ) : (
+                        <Visibility fontSize="small" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
           <TextField
@@ -230,6 +264,7 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
+            onBlur={handleBlur}
             error={Boolean(error.confirmPassword)}
             helperText={error.confirmPassword}
           />
