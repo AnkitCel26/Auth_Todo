@@ -1,28 +1,4 @@
-// import {AppBar, Toolbar, Typography, Button} from '@mui/material';
-// import {useNavigate} from 'react-router-dom';
 
-// function Navbar() {
-//     const navigate = useNavigate();
-    
-//     const handleLogout = () => {
-//         localStorage.removeItem('currentUser');
-//         navigate('/');
-//     };
-//     return (
-//         <AppBar position="static" sx={{backgroundColor: 'secondary.main'}}>
-//             <Toolbar sx={{color: 'secondary.light'}}>
-//                 <Typography  sx={{ flexGrow: 1 ,fontSize: '1.3rem', fontWeight: 600}}>
-//                     Todo App
-//                 </Typography>
-//                 <Button color="inherit" onClick={handleLogout} variant='contained' sx={{  fontSize: '1.2rem', fontWeight: 600}}>
-//                     Logout
-//                 </Button>
-//             </Toolbar>
-//         </AppBar>
-//     );
-// }
-
-// export default Navbar;
 
 import {
   AppBar,

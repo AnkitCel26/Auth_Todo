@@ -11,11 +11,11 @@ import { blue, orange } from '@mui/material/colors'
 const theme = createTheme({
   palette: {
     primary: {
-      main: blue[700], // Custom primary color
+      main: blue[700], 
     },
     secondary: {
       main: orange[500], 
-      light: '#000000'// Custom secondary color
+      light: '#000000'
     },
     background: {
       default: '#ba2222',
@@ -29,12 +29,12 @@ const theme = createTheme({
     },
   },
   components: {
-    // Override specific component styles globally
+    
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8, // Rounded buttons throughout the app
-          textTransform: 'none', // Remove uppercase default
+          borderRadius: 8, 
+          textTransform: 'none', 
         },
       },
     },
@@ -48,7 +48,7 @@ const App = () => {
       <CssBaseline />
       <ThemeProvider theme={theme}>
       <Routes>
-        
+
         <Route path="/" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/todo" element={<Todo/>} />
