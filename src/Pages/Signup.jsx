@@ -11,7 +11,6 @@ import {
   Typography,
   Alert,
   Stack,
-  Dialog,
 } from "@mui/material";
 
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
@@ -105,34 +104,74 @@ const Signup = () => {
   };
 
   return (
-    <Dialog
-      open={true}
-      slotProps={{
-        backdrop: {
-          sx: {
-            backgroundColor: "rgba(15, 23, 42, 0.6)",
-            backdropFilter: "blur(6px)",
-          },
-        },
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "#f4f6f8",
       }}
     >
-      <Box sx={{ p: 2, bgcolor: "#f4f6f8" }}>
-        <Paper
-          elevation={0}
+      <Paper
+        elevation={3}
+        sx={{
+          display: "flex",
+          width: 750,
+          borderRadius: 4,
+          overflow: "hidden",
+        }}
+      >
+       
+        <Box
           sx={{
-            p: 3,
-            width: 340,
-            border: "1px solid #e2e8f0",
+            flex: 1,
+            bgcolor: "#6366f1",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+            p: 4,
+          }}
+        >
+          <Box
+            component="img"
+            src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4dd.svg"
+            alt="Signup illustration"
+            sx={{ width: 100, opacity: 0.95 }}
+          />
+          <Typography
+            variant="h6"
+            sx={{ color: "#fff", fontWeight: 700, textAlign: "center" }}
+          >
+            Todo App
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: "rgba(255,255,255,0.75)", textAlign: "center" }}
+          >
+            Manage your tasks efficiently
+          </Typography>
+        </Box>
+
+        
+        <Box
+          sx={{
+            flex: 1,
+            p: 5,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
             bgcolor: "#fff",
+            overflowY: "auto",
           }}
         >
           <Stack spacing={1} alignItems="center" mb={3}>
             <PersonAddAlt1Icon sx={{ fontSize: 32, color: "#6366f1" }} />
-
             <Typography variant="h6" fontWeight={600}>
               Signup
             </Typography>
-
             <Typography variant="body2" color="text.secondary">
               Create your account
             </Typography>
@@ -230,9 +269,9 @@ const Signup = () => {
               Please fix the errors and try again.
             </Alert>
           )}
-        </Paper>
-      </Box>
-    </Dialog>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
