@@ -34,7 +34,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8, 
-          textTransform: 'none',
+          textTransform: 'none', 
         },
       },
     },
@@ -48,7 +48,7 @@ const App = () => {
       <CssBaseline />
       <ThemeProvider theme={theme}>
       <Routes>
-        
+
         <Route path="/" element={<Login/>} />
         <Route path="/signup" element={<Signup/>} />
         <Route path="/todo" element={<Todo/>} />

@@ -30,7 +30,7 @@ const Todo = () => {
     const allTodos = getTodos();
 
     setTodos(allTodos[currentUser] || []);
-  }, []);
+  }, [currentUser]);
 
   const handleAddTodo = () => {
     if (!task) return;
@@ -59,7 +59,19 @@ const Todo = () => {
     allTodos[currentUser] = updatedTodos;
     saveTodos(allTodos);
   };
+  const handleEdit = (id, newText) => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, text: newText } : todo,
+    );
+    setTodos(updatedTodos);
 
+    const allTodos = getTodos();
+    allTodos[currentUser] = updatedTodos;
+    saveTodos(allTodos);
+  };
+
+  
+  
   const handleToggle = (id) => {
     const updatedTodos = todos.map((todo) =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo,
@@ -75,9 +87,7 @@ const Todo = () => {
     saveTodos(allTodos);
   };
 
-  const completedTasks = todos.filter(
-    (todo) => todo.completed,
-  ).length;
+  const completedTasks = todos.filter((todo) => todo.completed).length;
 
   return (
     <Box
@@ -99,7 +109,6 @@ const Todo = () => {
             bgcolor: "#ffffff",
           }}
         >
-          
           <Box mb={4}>
             <Typography
               variant="h4"
@@ -122,7 +131,6 @@ const Todo = () => {
             </Typography>
           </Box>
 
-          
           <Stack
             direction="row"
             spacing={2}
@@ -153,7 +161,6 @@ const Todo = () => {
             />
           </Stack>
 
-          
           <Box
             sx={{
               display: "flex",
@@ -196,8 +203,7 @@ const Todo = () => {
 
                 "&:hover": {
                   bgcolor: "#4f46e5",
-                  boxShadow:
-                    "0 8px 20px rgba(99,102,241,0.3)",
+                  boxShadow: "0 8px 20px rgba(99,102,241,0.3)",
                   transform: "translateY(-1px)",
                 },
               }}
@@ -206,7 +212,6 @@ const Todo = () => {
             </Button>
           </Box>
 
-          
           {todos.length === 0 ? (
             <Paper
               elevation={0}
@@ -252,8 +257,7 @@ const Todo = () => {
 
                       "&:hover": {
                         transform: "translateY(-2px)",
-                        boxShadow:
-                          "0 8px 20px rgba(0,0,0,0.06)",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.06)",
                       },
                     }}
                   >
@@ -261,6 +265,7 @@ const Todo = () => {
                       todo={todo}
                       handleDelete={handleDelete}
                       handleToggle={handleToggle}
+                      handleEdit={handleEdit}
                     />
                   </Paper>
                 ))}

@@ -2,6 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUsers, saveUser } from "../localStorage";
+// import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import {
   Box,
@@ -11,7 +14,8 @@ import {
   Typography,
   Alert,
   Stack,
-  Dialog,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
@@ -21,6 +25,7 @@ import * as Yup from "yup";
 const Signup = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,6 +42,15 @@ const Signup = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+  const handleBlur = async (e) => {
+    const { name } = e.target;
+    try {
+      await ValidateSignup.validateAt(name, formData);
+      setError((prev) => ({ ...prev, [name]: "" }));
+    } catch (err) {
+      setError((prev) => ({ ...prev, [name]: err.message }));
+    }
   };
 
   const ValidateSignup = Yup.object({
@@ -74,7 +88,7 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      await ValidateSignup.validate(formData, { abortEarly: false });
+      await ValidateSignup.validate(formData, { abortEarly: true });
     } catch (error) {
       const newError = {};
       error.inner.forEach((err) => {
@@ -105,41 +119,77 @@ const Signup = () => {
   };
 
   return (
-    <Dialog
-      open={true}
-      slotProps={{
-        backdrop: {
-          sx: {
-            backgroundColor: "rgba(15, 23, 42, 0.6)",
-            backdropFilter: "blur(6px)",
-          },
-        },
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "#f4f6f8",
       }}
     >
-      <Box sx={{ p: 2, bgcolor: "#f4f6f8" }}>
-        <Paper
-          elevation={0}
+      <Paper
+        elevation={3}
+        sx={{
+          display: "flex",
+          width: 750,
+          borderRadius: 4,
+          overflow: "hidden",
+        }}
+      >
+        <Box
           sx={{
-            p: 3,
-            width: 340,
-            border: "1px solid #e2e8f0",
-            bgcolor: "#fff",
+            flex: 1,
+            bgcolor: "#6366f1",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+            p: 4,
           }}
         >
-         
+          <Box
+            component="img"
+            src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4dd.svg"
+            alt="Signup illustration"
+            sx={{ width: 100, opacity: 0.95 }}
+          />
+          <Typography
+            variant="h6"
+            sx={{ color: "#fff", fontWeight: 700, textAlign: "center" }}
+          >
+            Todo App
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: "rgba(255,255,255,0.75)", textAlign: "center" }}
+          >
+            Manage your tasks efficiently
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            flex: 1,
+            p: 5,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            bgcolor: "#fff",
+            overflowY: "auto",
+          }}
+        >
           <Stack spacing={1} alignItems="center" mb={3}>
             <PersonAddAlt1Icon sx={{ fontSize: 32, color: "#6366f1" }} />
-
             <Typography variant="h6" fontWeight={600}>
               Signup
             </Typography>
-
             <Typography variant="body2" color="text.secondary">
               Create your account
             </Typography>
           </Stack>
 
-          
           <TextField
             value={formData.name}
             label="Name"
@@ -147,7 +197,8 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
-            error={!!error.name}
+            onBlur={handleBlur}
+            error={Boolean(error.name)}
             helperText={error.name}
           />
 
@@ -158,7 +209,8 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
-            error={!!error.email}
+            onBlur={handleBlur}
+            error={Boolean(error.email)}
             helperText={error.email}
           />
 
@@ -169,20 +221,39 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
-            error={!!error.mobile}
+            onBlur={handleBlur}
+            error={Boolean(error.mobile)}
             helperText={error.mobile}
           />
-
           <TextField
             value={formData.password}
             label="Password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             onChange={handleChange}
-            error={!!error.password}
+            onBlur={handleBlur}
+            error={Boolean(error.password)}
             helperText={error.password}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <VisibilityOff fontSize="small" />
+                      ) : (
+                        <Visibility fontSize="small" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
           <TextField
@@ -193,18 +264,17 @@ const Signup = () => {
             fullWidth
             margin="normal"
             onChange={handleChange}
-            error={!!error.confirmPassword}
+            onBlur={handleBlur}
+            error={Boolean(error.confirmPassword)}
             helperText={error.confirmPassword}
           />
 
-          
           {error.error && (
             <Typography color="error" align="center" sx={{ mt: 1 }}>
               {error.error}
             </Typography>
           )}
 
-         
           <Button
             variant="contained"
             fullWidth
@@ -223,7 +293,6 @@ const Signup = () => {
             Signup
           </Button>
 
-          
           {status === "success" && (
             <Alert severity="success" sx={{ mt: 2 }}>
               Signup successful! Redirecting...
@@ -235,9 +304,9 @@ const Signup = () => {
               Please fix the errors and try again.
             </Alert>
           )}
-        </Paper>
-      </Box>
-    </Dialog>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
