@@ -118,7 +118,7 @@ const Todo = () => {
                 mb: 1,
               }}
             >
-              Todo Dashboard
+              Todo List
             </Typography>
 
             <Typography

@@ -1,10 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getUsers, saveUser } from "../localStorage";
 // import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
 import {
   Box,
@@ -25,7 +27,15 @@ import * as Yup from "yup";
 const Signup = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
+  const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [pswdBar, setPswdBar] = useState({
+    length: false,
+    upper: false,
+    lower: false,
+    number: false,
+    symbol: false,
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -35,14 +45,13 @@ const Signup = () => {
     mobile: "",
   });
 
-  const [error, setError] = useState({});
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
+
   const handleBlur = async (e) => {
     const { name } = e.target;
     try {
@@ -75,18 +84,33 @@ const Signup = () => {
         /[!@#$%^&*(),.?":{}|<>]/,
         "Password must contain at least one special character",
       )
-      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-      .matches(/[0-9]/, "Password must contain at least one number"),
+      .matches(
+        /^(?=.*[A-Z]).+$/,
+        "Password must contain at least one uppercase letter",
+      )
+      .matches(
+        /^(?=.*[a-z]).+$/,
+        "Password must contain at least one lowercase letter",
+      )
+      .matches(/^(?=.*[0-9]).+$/, "Password must contain at least one number"),
 
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Confirm Password is required"),
   });
 
+  const handlePasswordCheck = (password) => {
+    setPswdBar({
+      length: password.length >= 8,
+      upper: /[A-Z]/.test(password),
+      lower: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    });
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
-
     try {
       await ValidateSignup.validate(formData, { abortEarly: true });
     } catch (error) {
@@ -115,7 +139,7 @@ const Signup = () => {
 
     setTimeout(() => {
       navigate("/");
-    }, 4500);
+    }, 4000);
   };
 
   return (
@@ -232,7 +256,10 @@ const Signup = () => {
             type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
-            onChange={handleChange}
+            onChange={(e) => {
+              handleChange(e);
+              handlePasswordCheck(e.target.value);
+            }}
             onBlur={handleBlur}
             error={Boolean(error.password)}
             helperText={error.password}
@@ -255,18 +282,72 @@ const Signup = () => {
               },
             }}
           />
+          {formData.password.length > 0 &&
+            !(
+              pswdBar.length &&
+              pswdBar.upper &&
+              pswdBar.lower &&
+              pswdBar.number &&
+              pswdBar.symbol
+            ) && (
+              <Box sx={{ mt: 1 }}>
+                <Typography
+                  sx={{ color: pswdBar.length ? "green" : "#b71c1c" }}
+                >
+                  {pswdBar.length ? "✔" : "•"} At least 8 characters
+                </Typography>
+
+                <Typography sx={{ color: pswdBar.upper ? "green" : "#b71c1c" }}>
+                  {pswdBar.upper ? "✔" : "•"} One uppercase letter
+                </Typography>
+
+                <Typography sx={{ color: pswdBar.lower ? "green" : "#b71c1c" }}>
+                  {pswdBar.lower ? "✔" : "•"} One lowercase letter
+                </Typography>
+
+                <Typography
+                  sx={{ color: pswdBar.number ? "green" : "#b71c1c" }}
+                >
+                  {pswdBar.number ? "✔" : "•"} One number
+                </Typography>
+
+                <Typography
+                  sx={{ color: pswdBar.symbol ? "green" : "#b71c1c" }}
+                >
+                  {pswdBar.symbol ? "✔" : "•"} One special character
+                </Typography>
+              </Box>
+            )}
 
           <TextField
             value={formData.confirmPassword}
             label="Confirm Password"
             name="confirmPassword"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             onChange={handleChange}
             onBlur={handleBlur}
             error={Boolean(error.confirmPassword)}
             helperText={error.confirmPassword}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <VisibilityOff fontSize="small" />
+                      ) : (
+                        <Visibility fontSize="small" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
           {error.error && (
@@ -274,6 +355,7 @@ const Signup = () => {
               {error.error}
             </Typography>
           )}
+
 
           <Button
             variant="contained"
@@ -288,10 +370,20 @@ const Signup = () => {
               "&:hover": {
                 bgcolor: "#4f46e5",
               },
+              mb: 1,
             }}
           >
             Signup
           </Button>
+
+
+          <Typography variant="body2" align="center" mt={2}>
+            Don't have an account?{" "}
+            <Link to="/login" style={{ color: "#6366f1", fontWeight: 500 }}>
+              Login
+            </Link>
+          </Typography>
+
 
           {status === "success" && (
             <Alert severity="success" sx={{ mt: 2 }}>

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   Box,
   Button,
@@ -6,6 +8,8 @@ import {
   TextField,
   Typography,
   Stack,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,16 +19,18 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
+
   const handleLogin = () => {
     const users = getUsers();
     const validUser = users.find(
       (user) =>
-        user.email === loginData.email && user.password === loginData.password
+        user.email === loginData.email && user.password === loginData.password,
     );
 
     if (!validUser) {
@@ -50,13 +56,12 @@ const Login = () => {
         elevation={3}
         sx={{
           display: "flex",
-          width: 750,
-          minHeight: 420,
+          width: 850,
+          minHeight: 520,
           borderRadius: 4,
           overflow: "hidden",
         }}
       >
-        
         <Box
           sx={{
             flex: 1,
@@ -89,7 +94,6 @@ const Login = () => {
           </Typography>
         </Box>
 
-        
         <Box
           sx={{
             flex: 1,
@@ -99,7 +103,7 @@ const Login = () => {
             justifyContent: "center",
           }}
         >
-          <Stack spacing={1} alignItems="center" mb={3}>
+          <Stack spacing={1} alignitems="center" mb={3}>
             <LoginIcon sx={{ fontSize: 32, color: "#6366f1" }} />
             <Typography variant="h6" fontWeight={600}>
               Login
@@ -117,13 +121,43 @@ const Login = () => {
             onChange={handleChange}
           />
 
-          <TextField
+          {/* <TextField
             fullWidth
             label="Password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             margin="normal"
             onChange={handleChange}
+          /> */}
+          <TextField
+            value={loginData.password}
+            label="Password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            margin="normal"
+            onChange={handleChange}
+            // onBlur={handleBlur}
+            error={Boolean(error.password)}
+            helperText={error.password}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <VisibilityOff fontSize="small" />
+                      ) : (
+                        <Visibility fontSize="small" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
           {error && (
@@ -142,19 +176,26 @@ const Login = () => {
               "&:hover": { bgcolor: "#4f46e5" },
               textTransform: "none",
               fontWeight: 600,
+              mb: 1,
             }}
           >
             Login
           </Button>
 
-          <Button
+          {/* <Button
             component={Link}
             to="/signup"
             fullWidth
             sx={{ mt: 1, textTransform: "none" }}
           >
             Signup
-          </Button>
+          </Button> */}
+          <Typography variant="body2" align="center" mt={2}>
+            Don't have an account?{" "}
+            <Link to="/signup" style={{ color: "#6366f1", fontWeight: 500 }}>
+              Signup
+            </Link>
+          </Typography>
         </Box>
       </Paper>
     </Box>
